@@ -4,6 +4,7 @@
 import { reactive, computed } from "vue";
 import Content from "./components/Content.vue";
 import InnerHtml from "./components/InnerHtml.vue";
+import Navber from "./components/Navber.vue";
 
 const payload =
   "<h3>コンテンツ</h3><p>ここに本文。ここに本文。ここに本文。ここに本文。ここに本文。ここに本文。</p><h4>コンテンツ</h4><p>ここに本文。ここに本文。ここに本文。ここに本文。ここに本文。ここに本文。</p><p>ここに本文。ここに本文。ここに本文。ここに本文。ここに本文。ここに本文。</p><h3>コンテンツ</h3><p>ここに本文。ここに本文。ここに本文。ここに本文。ここに本文。ここに本文。</p><p>ここに本文。ここに本文。ここに本文。ここに本文。ここに本文。ここに本文。</p>";
@@ -14,6 +15,17 @@ const innerHtmlList = computed((): { html: string; tag: string }[] => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(state.innerHtmlRaw, "text/html");
   const elems = doc.querySelectorAll(" h2 ,h3,h4,p");
+  const body = doc.querySelector("body");
+  body?.querySelector("h3")?.setAttribute("id", "hoeg-h2");
+  if (body) {
+    console.log(
+      new XMLSerializer()
+        .serializeToString(body)
+        .replace('<body xmlns="http://www.w3.org/1999/xhtml">', "")
+        .replace("</body>", "")
+    );
+  }
+
   return Array.from(elems).map((e: HTMLElement | Element) => {
     return {
       html: `<${e.tagName}>${e.innerHTML}</${e.tagName}>`,
@@ -24,7 +36,10 @@ const innerHtmlList = computed((): { html: string; tag: string }[] => {
 </script>
 
 <template>
-  <div id="header"></div>
+  <Navber></Navber>
+  <div id="header">
+    <p>ここに良い感じの画像</p>
+  </div>
   <div id="contents">
     <Content
       v-for="(c, i) in innerHtmlList"
